@@ -1,0 +1,6 @@
+db/chroma/chroma.sqlite3 filter=lfs diff=lfs merge=lfs -text
+db/chroma/**/data_level0.bin filter=lfs diff=lfs merge=lfs -text
+db/chroma/**/index_metadata.pickle filter=lfs diff=lfs merge=lfs -text
+db/chroma/**/link_lists.bin filter=lfs diff=lfs merge=lfs -text
+db/chroma/**/length.bin filter=lfs diff=lfs merge=lfs -text
+db/chroma/**/header.bin filter=lfs diff=lfs merge=lfs -text
