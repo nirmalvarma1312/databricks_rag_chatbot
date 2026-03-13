@@ -7,5 +7,5 @@ data/raw/
   
 data/processed/
 data/chunks/
-db/chroma/
+
 logs/

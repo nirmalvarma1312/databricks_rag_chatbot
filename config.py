@@ -14,13 +14,32 @@ DOTENV_PATH = PROJECT_ROOT / ".env"
 load_dotenv(dotenv_path=DOTENV_PATH)
 
 
+def _read_secret(name: str, default: str = "") -> str:
+    """Read config from env first, then Streamlit secrets if available."""
+    value = os.getenv(name, "").strip()
+    if value:
+        return value
+
+    try:
+        import streamlit as st
+
+        secret_value = str(st.secrets.get(name, "")).strip()
+        if secret_value:
+            return secret_value
+    except Exception:
+        # Streamlit may be unavailable in non-UI contexts.
+        pass
+
+    return default
+
+
 @dataclass(frozen=True)
 class Settings:
     """Application settings loaded from environment variables."""
 
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
-    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
-    CHAT_MODEL: str = os.getenv("CHAT_MODEL", "gpt-4.1-mini")
+    OPENAI_API_KEY: str = _read_secret("OPENAI_API_KEY")
+    EMBEDDING_MODEL: str = _read_secret("EMBEDDING_MODEL", "text-embedding-3-small")
+    CHAT_MODEL: str = _read_secret("CHAT_MODEL", "gpt-4.1-mini")
 
     CHROMA_DIR: Path = Path(os.getenv("CHROMA_DIR", "./db/chroma"))
     RAW_DATA_DIR: Path = Path(os.getenv("RAW_DATA_DIR", "./data/raw"))
