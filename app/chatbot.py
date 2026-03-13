@@ -25,7 +25,7 @@ class DatabricksRAGChatbot:
         self.retriever = Retriever()
         self.openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-    def ask(self, question: str) -> ChatResponse:
+    def ask(self, question: str, retrieval_query: str | None = None) -> ChatResponse:
         """Run the full RAG flow and return grounded response with citations."""
         question = question.strip()
         if not question:
@@ -35,7 +35,8 @@ class DatabricksRAGChatbot:
                 found_in_docs=False,
             )
 
-        chunks = self.retriever.retrieve(question, top_k=settings.TOP_K)
+        query_for_retrieval = (retrieval_query or question).strip()
+        chunks = self.retriever.retrieve(query_for_retrieval, top_k=settings.TOP_K)
         if not chunks:
             return ChatResponse(
                 answer="I could not find this in the indexed Databricks docs.",
